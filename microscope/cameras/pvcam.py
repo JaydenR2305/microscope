@@ -1463,12 +1463,12 @@ class PVCamera(
     def _region(self):
         """Return a rgn_type for current roi and binning settings."""
         return rgn_type(
-            self.roi.left,
-            self.roi.left + self.roi.width - 1,
-            self.binning.h,
             self.roi.top,
             self.roi.top + self.roi.height - 1,
             self.binning.v,
+            self.roi.left,
+            self.roi.left + self.roi.width - 1,
+            self.binning.h
         )
 
     """Private methods, called here and within super classes."""
@@ -1525,8 +1525,8 @@ class PVCamera(
                 t_exp,
             )
             buffer_shape = (
-                self.roi.height // self.binning.v,
                 self.roi.width // self.binning.h,
+                self.roi.height // self.binning.v
             )
             self._buffer = np.require(
                 np.empty(buffer_shape, dtype=buffer_dtype),
@@ -1561,9 +1561,9 @@ class PVCamera(
                 self.handle, PL_CALLBACK_EOF, self._eof_callback
             )
             buffer_shape = (
-                self._circ_buffer_length,
-                self.roi.height // self.binning.v,
+                self._circ_buffer_length
                 self.roi.width // self.binning.h,
+                self.roi.height // self.binning.v
             )
             self._buffer = np.require(
                 np.empty(buffer_shape, dtype=buffer_dtype),
@@ -1593,7 +1593,7 @@ class PVCamera(
         # Update cycle time. Exposure time in seconds; readout time in microseconds.
         self.cycle_time = (
             self.exposure_time
-            + 1e-6 * self._params[PARAM_READOUT_TIME].current
+            + 1e-6 * self._params[PARAM_READOUT_TIME].current if PARAM_READOUT_TIME in self._params.keys() else 0
         )
         # Set up exposure time for VARIABLE_TIMED_MODE, as according to documentation.
         # It doesn't seem to work.
