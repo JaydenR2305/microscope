@@ -1561,7 +1561,7 @@ class PVCamera(
                 self.handle, PL_CALLBACK_EOF, self._eof_callback
             )
             buffer_shape = (
-                self._circ_buffer_length
+                self._circ_buffer_length,
                 self.roi.width // self.binning.h,
                 self.roi.height // self.binning.v
             )
